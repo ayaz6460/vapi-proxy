@@ -5,14 +5,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Only POST requests are allowed' });
   }
 
-  const VAPI_API_KEY = 'f6e063e2-0c8c-48f7-9c90-10f427680db0'; // ✅ Your private key
+  const VAPI_API_KEY = 'f6e063e2-0c8c-48f7-9c90-10f427680db0'; // ✅ Your Vapi private API key
   const VAPI_ENDPOINT = 'https://api.vapi.ai/call';
 
+  const { customer, metadata } = req.body;
+
   const payload = {
-    assistantId: '7b18ca6f-1aab-466c-a329-c13fc555b1de', // ✅ Your assistant ID
-    phoneNumberId: '4eb29124-3de2-4fd0-b280-324578fb4618', // ✅ Your phone number ID
-    customer: req.body.customer,
-    metadata: req.body.metadata
+    assistantId: '7b18ca6f-1aab-466c-a329-c13fc555b1de',     // ✅ Replace with your assistantId
+    phoneNumberId: '4eb29124-3de2-4fd0-b280-324578fb4618',   // ✅ Replace with your phoneNumberId
+    customer,
+    metadata
   };
 
   try {

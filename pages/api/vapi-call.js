@@ -1,25 +1,24 @@
+// pages/api/vapi-call.js (or app/api/vapi-call/route.js if you're using App Router)
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const VAPI_API_URL = 'https://api.vapi.ai/call';
-  const VAPI_API_KEY = process.env.VAPI_API_KEY; // Or hardcode for test: 'Bearer <your-key>'
+  const vapiResponse = await fetch("https://api.vapi.ai/call", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer f6e063e2-0c8c-48f7-9c90-10f427680db0`, // 👈 ensure this line is present
+    },
+    body: JSON.stringify(req.body),
+  });
 
-  try {
-    const response = await fetch(VAPI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${VAPI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(req.body),
-    });
+  const data = await vapiResponse.json();
 
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.status(500).json({ error: 'Proxy failed', details: err.message });
+  if (!vapiResponse.ok) {
+    return res.status(vapiResponse.status).json(data);
   }
+
+  res.status(200).json(data);
 }

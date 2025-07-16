@@ -1,29 +1,33 @@
+// /api/vapi-call.js
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Only POST requests allowed' });
+    return res.status(405).json({ error: 'Only POST requests are allowed' });
   }
 
- const VAPI_API_KEY = process.env.VAPI_API_KEY; // ✅ Correct
-  const VAPI_ENDPOINT = 'https://api.vapi.ai/calls';
+  const VAPI_API_KEY = 'f6e063e2-0c8c-48f7-9c90-10f427680db0'; // ✅ Your private key
+  const VAPI_ENDPOINT = 'https://api.vapi.ai/call';
 
-  if (!VAPI_API_KEY) {
-    return res.status(500).json({ error: 'Missing API Key in env' });
-  }
+  const payload = {
+    assistantId: '7b18ca6f-1aab-466c-a329-c13fc555b1de', // ✅ Your assistant ID
+    phoneNumberId: '4eb29124-3de2-4fd0-b280-324578fb4618', // ✅ Your phone number ID
+    customer: req.body.customer,
+    metadata: req.body.metadata
+  };
 
   try {
-    const response = await fetch(VAPI_ENDPOINT, {
+    const vapiResponse = await fetch(VAPI_ENDPOINT, {
       method: 'POST',
       headers: {
-        ''Authorization': `Bearer ${VAPI_API_KEY}`
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${VAPI_API_KEY}`,
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (err) {
-    console.error('[Proxy Error]', err.message);
-    res.status(500).json({ error: 'Proxy Error', details: err.message });
+    const data = await vapiResponse.json();
+    res.status(vapiResponse.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Proxy error', message: error.message });
   }
 }

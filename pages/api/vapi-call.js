@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     const response = await fetch(VAPI_ENDPOINT, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${VAPI_API_KEY}`,
+        ''Authorization': `Bearer ${VAPI_API_KEY}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(req.body),

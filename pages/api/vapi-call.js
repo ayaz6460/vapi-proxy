@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Only POST requests allowed' });
   }
 
-  const VAPI_API_KEY = process.env.VAPI_API_KEY;
+ const VAPI_API_KEY = process.env.VAPI_API_KEY; // ✅ Correct
   const VAPI_ENDPOINT = 'https://api.vapi.ai/calls';
 
   if (!VAPI_API_KEY) {

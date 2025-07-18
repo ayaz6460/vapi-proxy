@@ -1,28 +1,34 @@
+import Vapi from 'vapi';
+
+const vapi = new Vapi({
+  apiKey: process.env.VAPI_API_KEY, // Even better: set your API key as an env var!
+});
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
-  // Debug log
-  console.log("Proxy: Incoming payload", req.body);
 
-  // Make the Vapi call
-  const vapiResponse = await fetch("https://api.vapi.ai/calls", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer f6e063e2-0c8c-48f7-9c90-10f427680db0`,
-    },
-    body: JSON.stringify(req.body),
-  });
+  try {
+    const {
+      assistantId,
+      phoneNumberId,
+      customer,
+      metadata
+    } = req.body;
 
-  console.log("Proxy: Vapi status", vapiResponse.status);
+    // match your Apps Script payload structure
+    const call = await vapi.calls.create({
+      assistant: { assistantId },
+      phoneNumberId,
+      customer,
+      metadata // pass your metadata if needed
+    });
 
-  const data = await vapiResponse.json();
-  console.log("Proxy: Vapi response", data);
-
-  if (!vapiResponse.ok) {
-    return res.status(vapiResponse.status).json(data);
+    res.status(200).json(call);
+  } catch (error) {
+    // Log full error for debugging
+    console.error('Vapi SDK error:', error);
+    res.status(500).json({ error: error.message || 'Unknown error', details: error });
   }
-
-  return res.status(200).json(data);
 }
